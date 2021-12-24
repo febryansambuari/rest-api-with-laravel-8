@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PetitionCollection;
+use App\Http\Resources\PetitionResource;
 use App\Models\Petition;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
 class PetitionController extends Controller
@@ -14,7 +17,7 @@ class PetitionController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(new PetitionCollection(Petition::all()), Response::HTTP_OK);
     }
 
     /**
@@ -25,7 +28,9 @@ class PetitionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $petition = Petition::create($request->all());
+
+        return new PetitionCollection($petition);
     }
 
     /**
@@ -36,7 +41,7 @@ class PetitionController extends Controller
      */
     public function show(Petition $petition)
     {
-        //
+        return new PetitionResource($petition);
     }
 
     /**
@@ -48,7 +53,11 @@ class PetitionController extends Controller
      */
     public function update(Request $request, Petition $petition)
     {
-        //
+        $petition->update($request->only([
+            'title', 'category', 'description', 'author', 'signees'
+        ]));
+
+        return new PetitionResource($petition);
     }
 
     /**
@@ -59,6 +68,8 @@ class PetitionController extends Controller
      */
     public function destroy(Petition $petition)
     {
-        //
+        $petition->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
