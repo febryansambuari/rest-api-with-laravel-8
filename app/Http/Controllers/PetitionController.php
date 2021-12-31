@@ -28,9 +28,11 @@ class PetitionController extends Controller
      */
     public function store(Request $request)
     {
-        $petition = Petition::create($request->all());
+        $petition = Petition::create($request->only([
+            'title', 'category', 'description', 'author', 'signees'
+        ]));
 
-        return new PetitionCollection($petition);
+        return new PetitionResource($petition);
     }
 
     /**
